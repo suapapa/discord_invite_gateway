@@ -1,0 +1,8 @@
+.git
+.gitignore
+README.md
+*.md
+.antigravitycli/
+config.yaml
+*.test
+.DS_Store

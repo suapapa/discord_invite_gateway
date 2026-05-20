@@ -4,18 +4,25 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Discord Invite Gateway</title>
+        <!-- Modern Typography -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
         <style>
             :root {
-                --bg-color: #0f111a;
-                --card-bg: #1e2235;
-                --text-color: #f1f1f1;
-                --text-muted: #a0a0b0;
+                --bg-color: #060813;
+                --card-bg: rgba(17, 20, 38, 0.65);
+                --card-border: rgba(255, 255, 255, 0.08);
+                --text-color: #f3f4f6;
+                --text-muted: #9ca3af;
                 --primary-color: #5865f2; /* Discord Blurple */
-                --primary-hover: #4752c4;
-                --error-color: #ed4245;
-                --success-color: #3ba55d;
-                --border-radius: 8px;
-                --transition: all 0.2s ease-in-out;
+                --primary-gradient: linear-gradient(135deg, #5865f2 0%, #8b5cf6 100%);
+                --primary-hover-gradient: linear-gradient(135deg, #4752c4 0%, #7c3aed 100%);
+                --error-color: #f87171;
+                --success-color: #10b981;
+                --border-radius: 16px;
+                --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                --font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             }
 
             * {
@@ -25,9 +32,7 @@
             }
 
             body {
-                font-family:
-                    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-                    "Helvetica Neue", Arial, sans-serif;
+                font-family: var(--font-family);
                 background-color: var(--bg-color);
                 color: var(--text-color);
                 display: flex;
@@ -35,112 +40,252 @@
                 align-items: center;
                 min-height: 100vh;
                 padding: 20px;
+                overflow-x: hidden;
+                position: relative;
+            }
+
+            /* Stunning Background Mesh & Glow Blobs */
+            body::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background-image:
+                    linear-gradient(rgba(88, 101, 242, 0.04) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(88, 101, 242, 0.04) 1px, transparent 1px);
+                background-size: 50px 50px;
+                mask-image: radial-gradient(ellipse at center, black, transparent 75%);
+                -webkit-mask-image: radial-gradient(ellipse at center, black, transparent 75%);
+                pointer-events: none;
+                z-index: -1;
+            }
+
+            body::after {
+                content: "";
+                position: absolute;
+                width: 450px;
+                height: 450px;
+                background: radial-gradient(circle, rgba(88, 101, 242, 0.12) 0%, rgba(139, 92, 246, 0.04) 60%, transparent 100%);
+                filter: blur(80px);
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                pointer-events: none;
+                z-index: -2;
             }
 
             .container {
                 width: 100%;
-                max-width: 400px;
+                max-width: 420px;
+                perspective: 1000px;
             }
 
+            /* Glassmorphic Card Container */
             .card {
-                background-color: var(--card-bg);
+                background: var(--card-bg);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                border: 1px solid var(--card-border);
                 border-radius: var(--border-radius);
-                padding: 30px;
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+                padding: 40px 30px;
+                box-shadow: 
+                    0 20px 40px rgba(0, 0, 0, 0.4), 
+                    inset 0 1px 0 rgba(255, 255, 255, 0.06);
                 text-align: center;
+                animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+                transform-style: preserve-3d;
+            }
+
+            .brand-header {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                margin-bottom: 24px;
+            }
+
+            .brand-icon-wrapper {
+                width: 56px;
+                height: 56px;
+                background: rgba(88, 101, 242, 0.1);
+                border: 1px solid rgba(88, 101, 242, 0.2);
+                border-radius: 14px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin-bottom: 16px;
+                color: var(--primary-color);
+                box-shadow: 0 8px 16px rgba(88, 101, 242, 0.1);
+            }
+
+            .brand-icon-wrapper svg {
+                width: 28px;
+                height: 28px;
             }
 
             h2 {
-                margin-bottom: 10px;
-                font-weight: 600;
+                font-size: 1.5rem;
+                font-weight: 700;
+                letter-spacing: -0.5px;
+                margin-bottom: 8px;
+                background: linear-gradient(to right, #ffffff, #e5e7eb);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
             }
 
             p {
                 color: var(--text-muted);
-                font-size: 0.9rem;
-                margin-bottom: 24px;
+                font-size: 0.925rem;
+                line-height: 1.5;
+                margin-bottom: 28px;
             }
 
             .form-group {
-                margin-bottom: 20px;
+                margin-bottom: 22px;
                 text-align: left;
             }
 
             label {
                 display: block;
                 margin-bottom: 8px;
-                font-size: 0.85rem;
+                font-size: 0.75rem;
+                font-weight: 600;
                 color: var(--text-muted);
                 text-transform: uppercase;
-                letter-spacing: 0.5px;
+                letter-spacing: 1px;
             }
 
-            input[type="password"] {
+            /* Password Field Styling with Embedded Key SVG */
+            .input-wrapper {
+                position: relative;
+                display: flex;
+                align-items: center;
+            }
+
+            .input-wrapper input {
                 width: 100%;
-                padding: 12px;
-                background-color: #0c0d14;
-                border: 1px solid #2e3450;
+                padding: 14px 16px 14px 44px;
+                background: rgba(10, 11, 22, 0.6);
+                border: 1px solid rgba(255, 255, 255, 0.08);
                 border-radius: var(--border-radius);
                 color: var(--text-color);
-                font-size: 1rem;
+                font-size: 0.95rem;
+                font-family: inherit;
                 outline: none;
                 transition: var(--transition);
+                box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
             }
 
-            input[type="password"]:focus {
+            .input-wrapper input:focus {
                 border-color: var(--primary-color);
-                box-shadow: 0 0 0 2px rgba(88, 101, 242, 0.2);
+                box-shadow: 
+                    0 0 0 3px rgba(88, 101, 242, 0.15),
+                    inset 0 2px 4px rgba(0, 0, 0, 0.2);
+                background: rgba(10, 11, 22, 0.8);
             }
 
+            .input-wrapper .input-icon {
+                position: absolute;
+                left: 16px;
+                width: 18px;
+                height: 18px;
+                color: var(--text-muted);
+                transition: color 0.3s;
+                pointer-events: none;
+            }
+
+            .input-wrapper input:focus + .input-icon {
+                color: var(--primary-color);
+            }
+
+            /* Styled Buttons with Hover Glows & Slide Shifts */
             button {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
                 width: 100%;
-                padding: 12px;
-                background-color: var(--primary-color);
+                padding: 14px;
+                background: var(--primary-gradient);
                 border: none;
                 border-radius: var(--border-radius);
                 color: white;
-                font-size: 1rem;
+                font-size: 0.95rem;
                 font-weight: 600;
                 cursor: pointer;
                 transition: var(--transition);
+                box-shadow: 0 4px 14px rgba(88, 101, 242, 0.3);
             }
 
             button:hover {
-                background-color: var(--primary-hover);
+                background: var(--primary-hover-gradient);
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(88, 101, 242, 0.5);
+            }
+
+            button:active {
+                transform: translateY(0);
+            }
+
+            button:disabled {
+                opacity: 0.7;
+                cursor: not-allowed;
+                transform: none !important;
+                box-shadow: none !important;
             }
 
             .btn-secondary {
-                background-color: #3b4261;
-                margin-top: 10px;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                color: #e5e7eb;
+                margin-top: 12px;
+                box-shadow: none;
             }
 
             .btn-secondary:hover {
-                background-color: #474f75;
+                background: rgba(255, 255, 255, 0.1);
+                border-color: rgba(255, 255, 255, 0.15);
+                color: white;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            }
+
+            .btn-success {
+                background: var(--success-color) !important;
+                box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4) !important;
+                color: white !important;
+                border: none !important;
+            }
+
+            .btn-icon {
+                width: 18px;
+                height: 18px;
             }
 
             .error-message {
                 color: var(--error-color);
-                font-size: 0.85rem;
-                margin-top: 10px;
+                font-size: 0.825rem;
+                font-weight: 500;
+                margin-top: 12px;
                 min-height: 20px;
+                transition: var(--transition);
             }
 
             .hidden {
                 display: none !important;
             }
 
-            /* Invite Card Specifics */
+            /* Server Info (Invite Card Header) */
             .server-info {
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 flex-direction: column;
-                margin-bottom: 24px;
+                margin-bottom: 28px;
             }
 
+            /* Pulsing Server Icon */
             .server-icon {
-                width: 80px;
-                height: 80px;
+                width: 90px;
+                height: 90px;
                 border-radius: 50%;
                 background-color: #2f3136;
                 background-size: cover;
@@ -148,55 +293,141 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                font-size: 2rem;
-                font-weight: bold;
-                margin-bottom: 12px;
+                font-size: 2.25rem;
+                font-weight: 700;
+                margin-bottom: 16px;
                 color: #fff;
-                border: 2px solid #3b4261;
+                border: 3px solid rgba(88, 101, 242, 0.4);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+                position: relative;
+                animation: float 4s ease-in-out infinite;
+            }
+
+            .server-icon::before {
+                content: "";
+                position: absolute;
+                inset: -3px;
+                border-radius: 50%;
+                border: 3px solid var(--primary-color);
+                animation: pulse 2s infinite;
+                pointer-events: none;
+                opacity: 0.4;
             }
 
             .server-name {
-                font-size: 1.25rem;
+                font-size: 1.35rem;
+                font-weight: 700;
+                margin-bottom: 6px;
+                background: linear-gradient(to right, #ffffff, #e5e7eb);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+            .channel-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                background: rgba(88, 101, 242, 0.15);
+                border: 1px solid rgba(88, 101, 242, 0.25);
+                color: #a5b4fc;
+                padding: 4px 10px;
+                border-radius: 9999px;
+                font-size: 0.775rem;
+                font-weight: 600;
+                margin-top: 4px;
+            }
+
+            .channel-hash {
+                opacity: 0.6;
                 font-weight: bold;
-                margin-bottom: 4px;
             }
 
-            .channel-name {
-                font-size: 0.85rem;
-                color: var(--text-muted);
-            }
-
+            /* Voucher-Like Invite Link Box */
             .invite-link-box {
-                background-color: #0c0d14;
-                border: 1px solid #2e3450;
+                background-color: rgba(10, 11, 22, 0.7);
+                border: 1px dashed rgba(88, 101, 242, 0.3);
                 border-radius: var(--border-radius);
-                padding: 12px;
-                font-family: monospace;
-                font-size: 0.95rem;
-                margin-bottom: 20px;
+                padding: 16px;
+                font-family: 'Courier New', Courier, monospace;
+                font-size: 0.9rem;
+                font-weight: 600;
+                color: #a5b4fc;
+                margin-bottom: 24px;
                 word-break: break-all;
                 user-select: all;
+                position: relative;
+                box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
             }
 
+            /* Toast Notification Card */
             .toast {
                 position: fixed;
-                bottom: 20px;
+                bottom: 30px;
                 left: 50%;
                 transform: translateX(-50%) translateY(100px);
-                background-color: var(--success-color);
-                color: white;
-                padding: 10px 20px;
+                background-color: #111827;
+                border: 1px solid rgba(16, 185, 129, 0.25);
+                color: #e5e7eb;
+                padding: 14px 22px;
                 border-radius: var(--border-radius);
-                font-size: 0.9rem;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-                transition: transform 0.3s
-                    cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                font-size: 0.875rem;
+                font-weight: 500;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+                transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s;
+                opacity: 0;
                 pointer-events: none;
                 z-index: 1000;
+                display: flex;
+                align-items: center;
+                gap: 10px;
             }
 
             .toast.show {
                 transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+
+            .toast-icon {
+                color: var(--success-color);
+                width: 18px;
+                height: 18px;
+                flex-shrink: 0;
+            }
+
+            /* Animations declarations */
+            @keyframes float {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-6px); }
+            }
+
+            @keyframes pulse {
+                0%, 100% { transform: scale(1); opacity: 0.4; }
+                50% { transform: scale(1.1); opacity: 0; }
+            }
+
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                15%, 45%, 75% { transform: translateX(-8px); }
+                30%, 60%, 90% { transform: translateX(8px); }
+            }
+
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px) scale(0.98);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
+                }
+            }
+
+            .shake {
+                animation: shake 0.4s ease-in-out;
+            }
+
+            .animate-success {
+                animation: fadeInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
             }
         </style>
     </head>
@@ -204,20 +435,35 @@
         <div class="container">
             <!-- Login Card -->
             <div id="loginCard" class="card">
-                <h2>인증 필요</h2>
-                <p>디스코드 초대장을 보려면 암호를 입력해 주세요.</p>
+                <div class="brand-header">
+                    <div class="brand-icon-wrapper">
+                        <!-- Security Lock SVG -->
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </div>
+                    <h2>인증 필요</h2>
+                    <p>디스코드 초대장을 안전하게 확인하려면<br>서버 비밀번호를 입력해 주세요.</p>
+                </div>
 
                 <form id="loginForm" onsubmit="handleLogin(event)">
                     <div class="form-group">
-                        <label for="password">비밀번호</label>
-                        <input
-                            type="password"
-                            id="password"
-                            required
-                            placeholder="비밀번호를 입력하세요"
-                        />
+                        <label for="password">Security Password</label>
+                        <div class="input-wrapper">
+                            <input
+                                type="password"
+                                id="password"
+                                required
+                                placeholder="비밀번호를 입력하세요"
+                            />
+                            <!-- Key SVG Icon -->
+                            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path>
+                            </svg>
+                        </div>
                     </div>
-                    <button type="submit">인증하기</button>
+                    <button type="submit">인증 및 초대장 조회</button>
                     <div id="errorMessage" class="error-message"></div>
                 </form>
             </div>
@@ -227,28 +473,50 @@
                 <div class="server-info">
                     <div id="serverIcon" class="server-icon">D</div>
                     <div id="serverName" class="server-name">디스코드 서버</div>
-                    <div id="channelName" class="channel-name">#일반</div>
+                    <span class="channel-badge">
+                        <span class="channel-hash">#</span><span id="channelName">일반</span>
+                    </span>
                 </div>
 
-                <p>최신 디스코드 초대 링크가 준비되었습니다.</p>
+                <p>보안 게이트웨이 인증에 성공했습니다.<br>서버에 참여할 수 있는 링크가 아래 준비되었습니다.</p>
                 <div id="inviteLink" class="invite-link-box">
                     https://discord.gg/...
                 </div>
 
+                <!-- Join Server Button with External Link Icon -->
                 <button id="joinBtn" onclick="joinServer()">
-                    서버 접속하기
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                    <span>서버 접속하기</span>
                 </button>
+                
+                <!-- Copy Button with Clipboard Icon -->
                 <button
                     id="copyBtn"
                     class="btn-secondary"
                     onclick="copyInviteLink()"
                 >
-                    초대 링크 복사
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    <span>초대 링크 복사</span>
                 </button>
             </div>
         </div>
 
-        <div id="toast" class="toast">초대 링크가 복사되었습니다!</div>
+        <!-- Styled Toast Notification -->
+        <div id="toast" class="toast">
+            <!-- Checkmark Icon inside Toast -->
+            <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            <span id="toastMessage">초대 링크가 복사되었습니다!</span>
+        </div>
 
         <script>
             let currentInviteUrl = "";
@@ -260,11 +528,14 @@
 
             function showToast(message) {
                 const toast = document.getElementById("toast");
-                toast.textContent = message;
+                const toastMessage = document.getElementById("toastMessage");
+                if (toastMessage) {
+                    toastMessage.textContent = message;
+                }
                 toast.classList.add("show");
                 setTimeout(() => {
                     toast.classList.remove("show");
-                }, 2000);
+                }, 2200);
             }
 
             function fetchInviteInfo() {
@@ -295,7 +566,7 @@
                             document.getElementById("serverName").textContent =
                                 data.guild_name || "디스코드 서버";
                             document.getElementById("channelName").textContent =
-                                `#${data.channel_name || "일반"}`;
+                                data.channel_name || "일반";
                             document.getElementById("inviteLink").textContent =
                                 data.invite_url;
 
@@ -329,6 +600,7 @@
                 e.preventDefault();
                 const passwordInput = document.getElementById("password");
                 const errorDiv = document.getElementById("errorMessage");
+                const loginCard = document.getElementById("loginCard");
                 errorDiv.textContent = "";
 
                 fetch("/login", {
@@ -352,6 +624,11 @@
                     })
                     .catch((err) => {
                         errorDiv.textContent = err.message;
+                        // Shake card on validation failure
+                        loginCard.classList.add("shake");
+                        setTimeout(() => {
+                            loginCard.classList.remove("shake");
+                        }, 500);
                     });
             }
 
@@ -360,7 +637,25 @@
                 navigator.clipboard
                     .writeText(currentInviteUrl)
                     .then(() => {
-                        showToast("초대 링크가 복사되었습니다!");
+                        showToast("초대 링크가 클립보드에 복사되었습니다!");
+                        
+                        // Button dynamic success state micro-interaction
+                        const copyBtn = document.getElementById("copyBtn");
+                        const originalHTML = copyBtn.innerHTML;
+                        copyBtn.innerHTML = `
+                            <svg class="btn-icon animate-success" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <span>복사 완료!</span>
+                        `;
+                        copyBtn.classList.add("btn-success");
+                        copyBtn.disabled = true;
+
+                        setTimeout(() => {
+                            copyBtn.innerHTML = originalHTML;
+                            copyBtn.classList.remove("btn-success");
+                            copyBtn.disabled = false;
+                        }, 2000);
                     })
                     .catch((err) => {
                         console.error("클립보드 복사 실패:", err);
@@ -376,3 +671,4 @@
         </script>
     </body>
 </html>
+

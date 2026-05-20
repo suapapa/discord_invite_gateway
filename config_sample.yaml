@@ -1,0 +1,15 @@
+discord:
+  # Discord 봇 토큰
+  # Discord Developer Portal에서 생성한 봇의 토큰을 입력하세요
+  bot_token: "YOUR_DISCORD_BOT_TOKEN"
+
+  # 초대 링크를 생성할 대상 채널 ID
+  # Discord 앱에서 개발자 모드를 활성화한 후 채널을 우클릭하여 ID 복사
+  channel_id: "YOUR_DISCORD_CHANNEL_ID"
+
+web:
+  # 웹페이지 조회 시 입력할 비밀번호
+  password: "YOUR_SECRET_PASSWORD"
+
+  # 웹 서버가 작동할 포트 (기본값: 8080)
+  port: 8080
