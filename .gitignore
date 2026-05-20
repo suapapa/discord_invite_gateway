@@ -1,0 +1,14 @@
+# Config file containing credentials
+config.yaml
+
+# Compiled binaries
+discord-invite-gateway
+*.exe
+*.exe.lib
+*.dll
+*.so
+*.dylib
+
+# Go build cache and test files
+.test/
+coverage.txt

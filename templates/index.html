@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Discord Invite Gateway</title>
+        <style>
+            :root {
+                --bg-color: #0f111a;
+                --card-bg: #1e2235;
+                --text-color: #f1f1f1;
+                --text-muted: #a0a0b0;
+                --primary-color: #5865f2; /* Discord Blurple */
+                --primary-hover: #4752c4;
+                --error-color: #ed4245;
+                --success-color: #3ba55d;
+                --border-radius: 8px;
+                --transition: all 0.2s ease-in-out;
+            }
+
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                font-family:
+                    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                    "Helvetica Neue", Arial, sans-serif;
+                background-color: var(--bg-color);
+                color: var(--text-color);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                padding: 20px;
+            }
+
+            .container {
+                width: 100%;
+                max-width: 400px;
+            }
+
+            .card {
+                background-color: var(--card-bg);
+                border-radius: var(--border-radius);
+                padding: 30px;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+                text-align: center;
+            }
+
+            h2 {
+                margin-bottom: 10px;
+                font-weight: 600;
+            }
+
+            p {
+                color: var(--text-muted);
+                font-size: 0.9rem;
+                margin-bottom: 24px;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+                text-align: left;
+            }
+
+            label {
+                display: block;
+                margin-bottom: 8px;
+                font-size: 0.85rem;
+                color: var(--text-muted);
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            input[type="password"] {
+                width: 100%;
+                padding: 12px;
+                background-color: #0c0d14;
+                border: 1px solid #2e3450;
+                border-radius: var(--border-radius);
+                color: var(--text-color);
+                font-size: 1rem;
+                outline: none;
+                transition: var(--transition);
+            }
+
+            input[type="password"]:focus {
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 2px rgba(88, 101, 242, 0.2);
+            }
+
+            button {
+                width: 100%;
+                padding: 12px;
+                background-color: var(--primary-color);
+                border: none;
+                border-radius: var(--border-radius);
+                color: white;
+                font-size: 1rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: var(--transition);
+            }
+
+            button:hover {
+                background-color: var(--primary-hover);
+            }
+
+            .btn-secondary {
+                background-color: #3b4261;
+                margin-top: 10px;
+            }
+
+            .btn-secondary:hover {
+                background-color: #474f75;
+            }
+
+            .error-message {
+                color: var(--error-color);
+                font-size: 0.85rem;
+                margin-top: 10px;
+                min-height: 20px;
+            }
+
+            .hidden {
+                display: none !important;
+            }
+
+            /* Invite Card Specifics */
+            .server-info {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                margin-bottom: 24px;
+            }
+
+            .server-icon {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                background-color: #2f3136;
+                background-size: cover;
+                background-position: center;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 2rem;
+                font-weight: bold;
+                margin-bottom: 12px;
+                color: #fff;
+                border: 2px solid #3b4261;
+            }
+
+            .server-name {
+                font-size: 1.25rem;
+                font-weight: bold;
+                margin-bottom: 4px;
+            }
+
+            .channel-name {
+                font-size: 0.85rem;
+                color: var(--text-muted);
+            }
+
+            .invite-link-box {
+                background-color: #0c0d14;
+                border: 1px solid #2e3450;
+                border-radius: var(--border-radius);
+                padding: 12px;
+                font-family: monospace;
+                font-size: 0.95rem;
+                margin-bottom: 20px;
+                word-break: break-all;
+                user-select: all;
+            }
+
+            .toast {
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%) translateY(100px);
+                background-color: var(--success-color);
+                color: white;
+                padding: 10px 20px;
+                border-radius: var(--border-radius);
+                font-size: 0.9rem;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+                transition: transform 0.3s
+                    cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                pointer-events: none;
+                z-index: 1000;
+            }
+
+            .toast.show {
+                transform: translateX(-50%) translateY(0);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- Login Card -->
+            <div id="loginCard" class="card">
+                <h2>인증 필요</h2>
+                <p>디스코드 초대장을 보려면 암호를 입력해 주세요.</p>
+
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="password">비밀번호</label>
+                        <input
+                            type="password"
+                            id="password"
+                            required
+                            placeholder="비밀번호를 입력하세요"
+                        />
+                    </div>
+                    <button type="submit">인증하기</button>
+                    <div id="errorMessage" class="error-message"></div>
+                </form>
+            </div>
+
+            <!-- Invite Card -->
+            <div id="inviteCard" class="card hidden">
+                <div class="server-info">
+                    <div id="serverIcon" class="server-icon">D</div>
+                    <div id="serverName" class="server-name">디스코드 서버</div>
+                    <div id="channelName" class="channel-name">#일반</div>
+                </div>
+
+                <p>최신 디스코드 초대 링크가 준비되었습니다.</p>
+                <div id="inviteLink" class="invite-link-box">
+                    https://discord.gg/...
+                </div>
+
+                <button id="joinBtn" onclick="joinServer()">
+                    서버 접속하기
+                </button>
+                <button
+                    id="copyBtn"
+                    class="btn-secondary"
+                    onclick="copyInviteLink()"
+                >
+                    초대 링크 복사
+                </button>
+            </div>
+        </div>
+
+        <div id="toast" class="toast">초대 링크가 복사되었습니다!</div>
+
+        <script>
+            let currentInviteUrl = "";
+
+            // 페이지 로드 시 초대 정보 조회 시도
+            window.addEventListener("DOMContentLoaded", () => {
+                fetchInviteInfo();
+            });
+
+            function showToast(message) {
+                const toast = document.getElementById("toast");
+                toast.textContent = message;
+                toast.classList.add("show");
+                setTimeout(() => {
+                    toast.classList.remove("show");
+                }, 2000);
+            }
+
+            function fetchInviteInfo() {
+                fetch("/api/invite")
+                    .then((response) => {
+                        if (response.status === 401) {
+                            // 인증 필요함
+                            document
+                                .getElementById("loginCard")
+                                .classList.remove("hidden");
+                            document
+                                .getElementById("inviteCard")
+                                .classList.add("hidden");
+                            return null;
+                        }
+                        if (!response.ok) {
+                            throw new Error(
+                                "초대 정보를 가져오는데 실패했습니다.",
+                            );
+                        }
+                        return response.json();
+                    })
+                    .then((data) => {
+                        if (data) {
+                            currentInviteUrl = data.invite_url;
+
+                            // UI에 데이터 채우기
+                            document.getElementById("serverName").textContent =
+                                data.guild_name || "디스코드 서버";
+                            document.getElementById("channelName").textContent =
+                                `#${data.channel_name || "일반"}`;
+                            document.getElementById("inviteLink").textContent =
+                                data.invite_url;
+
+                            const iconDiv =
+                                document.getElementById("serverIcon");
+                            if (data.guild_icon_url) {
+                                iconDiv.style.backgroundImage = `url('${data.guild_icon_url}')`;
+                                iconDiv.textContent = "";
+                            } else {
+                                iconDiv.style.backgroundImage = "none";
+                                iconDiv.textContent = (data.guild_name || "D")
+                                    .substring(0, 1)
+                                    .toUpperCase();
+                            }
+
+                            // 카드 전환
+                            document
+                                .getElementById("loginCard")
+                                .classList.add("hidden");
+                            document
+                                .getElementById("inviteCard")
+                                .classList.remove("hidden");
+                        }
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                    });
+            }
+
+            function handleLogin(e) {
+                e.preventDefault();
+                const passwordInput = document.getElementById("password");
+                const errorDiv = document.getElementById("errorMessage");
+                errorDiv.textContent = "";
+
+                fetch("/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ password: passwordInput.value }),
+                })
+                    .then((response) => {
+                        if (response.ok) {
+                            passwordInput.value = "";
+                            fetchInviteInfo();
+                        } else {
+                            return response.json().then((data) => {
+                                throw new Error(
+                                    data.error || "인증에 실패했습니다.",
+                                );
+                            });
+                        }
+                    })
+                    .catch((err) => {
+                        errorDiv.textContent = err.message;
+                    });
+            }
+
+            function copyInviteLink() {
+                if (!currentInviteUrl) return;
+                navigator.clipboard
+                    .writeText(currentInviteUrl)
+                    .then(() => {
+                        showToast("초대 링크가 복사되었습니다!");
+                    })
+                    .catch((err) => {
+                        console.error("클립보드 복사 실패:", err);
+                        showToast("복사에 실패했습니다. 직접 복사해 주세요.");
+                    });
+            }
+
+            function joinServer() {
+                if (currentInviteUrl) {
+                    window.open(currentInviteUrl, "_blank");
+                }
+            }
+        </script>
+    </body>
+</html>
